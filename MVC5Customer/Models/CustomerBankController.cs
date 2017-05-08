@@ -31,6 +31,7 @@ namespace MVC5Customer.Models
                 db.客戶銀行資訊.Add(customerBank);
                 db.SaveChanges();
                 return RedirectToAction("Index");
+
             }
             return View();
         }

@@ -192,6 +192,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Customer.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\CustomerBankController.cs" />
     <Compile Include="Models\EFGeneratePartialClass.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -306,6 +307,7 @@
     <Content Include="Views\Customer\Edit.cshtml" />
     <Content Include="Views\Customer\Details.cshtml" />
     <Content Include="Views\Customer\Create.cshtml" />
+    <Content Include="Views\CustomerBank\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

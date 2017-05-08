@@ -62,5 +62,12 @@ namespace MVC5Customer.Controllers
             var data = db.客戶資料.Find(id);
             return View(data);
         }
+        public ActionResult Delete(int id)
+        {
+            var customer = db.客戶資料.Find(id);
+            db.客戶資料.Remove(customer);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }

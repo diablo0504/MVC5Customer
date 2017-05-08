@@ -192,7 +192,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Customer.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\CustomerBankController.cs" />
+    <Compile Include="Controllers\CustomerBankController.cs" />
     <Compile Include="Models\EFGeneratePartialClass.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

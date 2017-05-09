@@ -308,6 +308,9 @@
     <Content Include="Views\Customer\Details.cshtml" />
     <Content Include="Views\Customer\Create.cshtml" />
     <Content Include="Views\CustomerBank\Index.cshtml" />
+    <Content Include="Views\CustomerBank\Create.cshtml" />
+    <Content Include="Views\CustomerBank\Edit.cshtml" />
+    <Content Include="Views\CustomerBank\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

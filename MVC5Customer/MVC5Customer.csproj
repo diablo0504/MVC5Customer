@@ -170,6 +170,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CustomerContactPersonController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -311,6 +312,11 @@
     <Content Include="Views\CustomerBank\Create.cshtml" />
     <Content Include="Views\CustomerBank\Edit.cshtml" />
     <Content Include="Views\CustomerBank\Details.cshtml" />
+    <Content Include="Views\CustomerContactPerson\Index.cshtml" />
+    <Content Include="Views\CustomerContactPerson\Create.cshtml" />
+    <Content Include="Views\CustomerContactPerson\Edit.cshtml" />
+    <Content Include="Views\CustomerContactPerson\Details.cshtml" />
+    <Content Include="Views\CustomerContactPerson\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

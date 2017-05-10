@@ -18,6 +18,7 @@ namespace MVC5Customer.Controllers
             var data = list.Where(c => c.IsDelete == false).OrderByDescending(c => c.Id);
             return View(data);
         }
+
         public ActionResult Create()
         {
             return View();
@@ -78,7 +79,9 @@ namespace MVC5Customer.Controllers
                 throw ex;
             }
             return RedirectToAction("Index");
-
         }
+
+  
+    
     }
 }

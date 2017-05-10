@@ -15,7 +15,7 @@ namespace MVC5Customer.Controllers
         public ActionResult Index()
         {
             var list = db.客戶資料.AsQueryable();
-            var data = list.OrderByDescending(c => c.Id);
+            var data = list.Where(c => c.IsDelete == false).OrderByDescending(c => c.Id);
             return View(data);
         }
         public ActionResult Create()
@@ -65,9 +65,20 @@ namespace MVC5Customer.Controllers
         public ActionResult Delete(int id)
         {
             var customer = db.客戶資料.Find(id);
-            db.客戶資料.Remove(customer);
-            db.SaveChanges();
+            db.客戶聯絡人.RemoveRange(customer.客戶聯絡人);
+            db.客戶銀行資訊.RemoveRange(customer.客戶銀行資訊);
+            
+            customer.IsDelete = true;
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                throw ex;
+            }
             return RedirectToAction("Index");
+
         }
     }
 }

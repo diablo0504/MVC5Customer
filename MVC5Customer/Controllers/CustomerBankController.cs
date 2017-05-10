@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using MVC5Customer.Models;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 
 namespace MVC5Customer.Models
 {
@@ -21,7 +22,7 @@ namespace MVC5Customer.Models
         }
         public ActionResult Create()
         {
-            var customerNameList = db.客戶資料.AsQueryable();
+            var customerNameList = db.客戶資料.AsQueryable().Where(c => c.IsDelete ==false);
             List<SelectListItem> items = new List<SelectListItem>();
             foreach (var name in customerNameList)
             {
@@ -36,14 +37,19 @@ namespace MVC5Customer.Models
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(客戶銀行資訊 customerBank)
+        public ActionResult Create(客戶銀行資訊 customerBank, string 客戶名稱)
         {
             if (ModelState.IsValid)
             {
-                db.客戶銀行資訊.Add(customerBank);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-
+                int test;
+                if(int.TryParse(客戶名稱 ,out test))
+                {
+                    customerBank.客戶Id = int.Parse(客戶名稱);
+                    var ss = 客戶名稱;
+                    db.客戶銀行資訊.Add(customerBank);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             return View();
         }
@@ -78,8 +84,16 @@ namespace MVC5Customer.Models
         public ActionResult Delete(int id )
         {
             var bank = db.客戶銀行資訊.Find(id);
-            db.客戶銀行資訊.Remove(bank);
-            db.SaveChanges();
+            //db.客戶銀行資訊.Remove(bank);
+            bank.IsDelete = true;
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                throw ex;
+            }
             return RedirectToAction("Index");
         }
     }

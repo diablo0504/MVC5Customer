@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using MVC5Customer.Models;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 
 namespace MVC5Customer.Controllers
 {
@@ -15,12 +16,12 @@ namespace MVC5Customer.Controllers
         public ActionResult Index()
         {
             var list = db.客戶聯絡人.AsQueryable();
-            var data = list.OrderByDescending(p => p.Id);
+            var data = list.Where(p => p.IsDelete ==false).OrderByDescending(p => p.Id);
             return View(data);
         }
         public ActionResult Create()
         {
-            var customerNameList = db.客戶資料.AsQueryable();
+            var customerNameList = db.客戶資料.AsQueryable().Where(p => p.IsDelete ==false);
             List<SelectListItem> items = new List<SelectListItem>();
             foreach (var name in customerNameList)
             {
@@ -74,9 +75,18 @@ namespace MVC5Customer.Controllers
         public ActionResult Delete(int id)
         {
             var person = db.客戶聯絡人.Find(id);
-            db.客戶聯絡人.Remove(person);
-            db.SaveChanges();
+            //db.客戶聯絡人.Remove(person);
+            person.IsDelete = true;
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                throw ex;
+            }
             return RedirectToAction("Index");
+
         }
     }
 }

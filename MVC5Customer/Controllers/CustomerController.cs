@@ -18,6 +18,12 @@ namespace MVC5Customer.Controllers
             var data = list.Where(c => c.IsDelete == false).OrderByDescending(c => c.Id);
             return View(data);
         }
+        //public ActionResult Index(object ss)
+        //{
+        //    //var list = db.客戶資料.AsQueryable();
+        //    //var data = list.Where(c => c.IsDelete == false).OrderByDescending(c => c.Id);
+        //    return View(ss);
+        //}
 
         public ActionResult Create()
         {
@@ -80,7 +86,19 @@ namespace MVC5Customer.Controllers
             }
             return RedirectToAction("Index");
         }
-
+        [HttpPost]
+        public ActionResult Index (SearchViewMode sss)
+        {
+            var list = db.客戶資料.AsQueryable();
+            if (string.IsNullOrEmpty(sss.Query))
+            {
+                sss.Query = "";
+            }
+           
+            var data = list.Where(c => c.客戶名稱.Contains(sss.Query) && c.IsDelete==false).OrderByDescending(c => c.Id);
+            return View(data);
+            //return View();
+        }
   
     
     }

@@ -39,4 +39,11 @@ namespace MVC5Customer.Models
         public virtual ICollection<客戶銀行資訊> 客戶銀行資訊 { get; set; }
         public virtual ICollection<客戶聯絡人> 客戶聯絡人 { get; set; }
     }
+
+    public class SearchViewMode
+    {
+        public string Query { get; set; }
+    }
+
+
 }

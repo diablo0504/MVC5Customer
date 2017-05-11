@@ -59,7 +59,6 @@
         <EntityType Name="View_CustomerDataNum">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="客戶名稱" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="客戶名稱" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -211,7 +210,6 @@
         <EntityType Name="View_CustomerDataNum">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="客戶名稱" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="客戶名稱" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />

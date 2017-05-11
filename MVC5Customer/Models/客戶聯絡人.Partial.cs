@@ -29,7 +29,9 @@ namespace MVC5Customer.Models
         [EmailAddress(ErrorMessage ="Email格式錯誤")]
         public string Email { get; set; }
         
-        [StringLength(50, ErrorMessage="欄位長度不得大於 10 個字元")]
+        [StringLength(12, ErrorMessage="欄位長度不得大於 11 個字元")]
+        //[RegularExpression(@"[0-9]{4}\-[0-9]{3}\-[0-9]{3}", ErrorMessage = "手機格式錯誤")]
+        [RegularExpression(@"\d{4}-\d{6}", ErrorMessage = "手機格式錯誤")]
         public string 手機 { get; set; }
         
         [StringLength(50, ErrorMessage="欄位長度不得大於 10 個字元")]

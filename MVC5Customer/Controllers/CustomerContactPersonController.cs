@@ -88,5 +88,17 @@ namespace MVC5Customer.Controllers
             return RedirectToAction("Index");
 
         }
+        [HttpPost]
+        public ActionResult Index(SearchContactViewMode Contact)
+        {
+            var list = db.客戶聯絡人.AsQueryable();
+            if (string.IsNullOrEmpty(Contact.ContactQuery))
+            {
+                Contact.ContactQuery = "";
+            }
+            var data = list.Where(c => (c.姓名.Contains(Contact.ContactQuery)|| c.職稱.Contains(Contact.ContactQuery)) && c.IsDelete == false).OrderByDescending(c => c.Id);
+            return View(data);
+            //return View();
+        }
     }
 }

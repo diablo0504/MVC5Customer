@@ -9,6 +9,12 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+@using (Html.BeginForm("Index", "CustomerContactPerson"))
+{
+    @Html.Label("聯絡人名稱搜尋")
+    @Html.TextBox("ContactQuery")
+    <input type="submit" value="search" />
+}
 <table class="table">
     <tr>
         <th>

@@ -33,4 +33,8 @@ namespace MVC5Customer.Models
     
         public virtual 客戶資料 客戶資料 { get; set; }
     }
+    public class SearchBankViewMode
+    {
+        public string BankQuery { get; set; }
+    }
 }

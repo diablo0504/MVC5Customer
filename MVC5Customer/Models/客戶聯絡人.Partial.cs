@@ -37,4 +37,8 @@ namespace MVC5Customer.Models
     
         public virtual 客戶資料 客戶資料 { get; set; }
     }
+    public class SearchContactViewMode
+    {
+        public string ContactQuery { get; set; }
+    }
 }

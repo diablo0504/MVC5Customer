@@ -96,5 +96,17 @@ namespace MVC5Customer.Models
             }
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        public ActionResult Index(SearchBankViewMode Bank)
+        {
+            var list = db.客戶銀行資訊.AsQueryable();
+            if (string.IsNullOrEmpty(Bank.BankQuery))
+            {
+                Bank.BankQuery = "";
+            }
+            var data = list.Where(c => c.銀行名稱.Contains(Bank.BankQuery) && c.IsDelete == false).OrderByDescending(c => c.Id);
+            return View(data);
+            //return View();
+        }
     }
 }

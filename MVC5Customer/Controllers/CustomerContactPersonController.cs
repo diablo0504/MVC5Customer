@@ -43,6 +43,20 @@ namespace MVC5Customer.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            else
+            {
+                var customerNameList = db.客戶資料.AsQueryable().Where(p => p.IsDelete == false);
+                List<SelectListItem> items = new List<SelectListItem>();
+                foreach (var name in customerNameList)
+                {
+                    items.Add(new SelectListItem()
+                    {
+                        Text = name.客戶名稱.ToString(),
+                        Value = name.Id.ToString()
+                    });
+                }
+                ViewBag.items = items;
+            }
             return View();
         }
         public ActionResult Edit(int id )

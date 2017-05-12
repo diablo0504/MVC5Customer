@@ -12,18 +12,22 @@ namespace MVC5Customer.Controllers
     {
         // GET: Customer
         CustomerEntities db = new CustomerEntities();
-        public ActionResult Index()
-        {
-            var list = db.客戶資料.AsQueryable();
-            var data = list.Where(c => c.IsDelete == false).OrderByDescending(c => c.Id);
-            return View(data);
-        }
-        //public ActionResult Index(object ss)
+        //public ActionResult Index()
         //{
-        //    //var list = db.客戶資料.AsQueryable();
-        //    //var data = list.Where(c => c.IsDelete == false).OrderByDescending(c => c.Id);
-        //    return View(ss);
+        //    var list = db.客戶資料.AsQueryable();
+        //    var data = list.Where(c => c.IsDelete == false).OrderByDescending(c => c.Id);
+        //    return View(data);
         //}
+        public ActionResult Index(string  keyword)
+        {
+            var data = db.客戶資料.Where(c => c.IsDelete == false).AsQueryable();
+            
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                data = data.Where(c => c.客戶名稱.Contains(keyword));
+            }
+            return View(data.ToList());
+        }
 
         public ActionResult Create()
         {

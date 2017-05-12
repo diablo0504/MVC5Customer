@@ -10,11 +10,19 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm("Index", "Customer"))
+@*@using (Html.BeginForm("Index", "Customer"))
 {
     @Html.Label("客戶名稱搜尋")
      @Html.TextBox("Query")
      <input type="submit" value="search" />
+}*@
+
+@using (Html.BeginForm("Index", "Customer",FormMethod.Get))
+{
+    @*@Html.Label("客戶名稱搜尋")
+    @Html.TextBox("Query")*@
+    <input type="search" name="keyword" placeholder="請輸入關鍵字" value=""/>
+    <input type="submit" value="search" />
 }
 <p>
     @*客戶名稱搜尋<input id="Query" name="Query" type="text" />*@

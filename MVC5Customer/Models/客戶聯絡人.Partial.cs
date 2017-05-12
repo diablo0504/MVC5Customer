@@ -3,12 +3,32 @@ namespace MVC5Customer.Models
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    
+    using ValidationAttributes;
+    using System.Linq;
+
     [MetadataType(typeof(客戶聯絡人MetaData))]
-    public partial class 客戶聯絡人
+    public partial class 客戶聯絡人 : IValidatableObject
     {
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var db = new CustomerEntities();
+            if (this.Id ==0)
+            {
+                if (db.客戶聯絡人.Where( p =>p.客戶Id ==this.客戶Id &&  p.Email ==this.Email).Any())
+                {
+                    yield return new ValidationResult("Email 已存在",new string[] {"Email" });
+                }
+            }else
+            {
+                if (db.客戶聯絡人.Where(p => p.客戶Id == this.客戶Id &&  p.Id !=this.Id && p.Email == this.Email).Any())
+                {
+                    yield return new ValidationResult("Email 已存在", new string[] { "Email" });
+                }
+            }
+            yield return ValidationResult.Success;
+        }
     }
-    
+
     public partial class 客戶聯絡人MetaData
     {
         [Required]
@@ -27,6 +47,7 @@ namespace MVC5Customer.Models
         [StringLength(250, ErrorMessage="欄位長度不得大於 250 個字元")]
         [Required]
         [EmailAddress(ErrorMessage ="Email格式錯誤")]
+        //[CheckContactPersonEmailRepeat(ErrorMessage = "Email已重複")]
         public string Email { get; set; }
         
         [StringLength(12, ErrorMessage="欄位長度不得大於 11 個字元")]

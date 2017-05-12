@@ -208,6 +208,7 @@
     <Compile Include="Models\sysdiagrams.Partial.cs">
       <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ValidationAttributes\CheckContactPersonEmailRepeat.cs" />
     <Compile Include="Models\View_CustomerDataNum.cs">
       <DependentUpon>Customer.tt</DependentUpon>
     </Compile>

@@ -12,21 +12,15 @@ namespace MVC5Customer.Controllers
     {
         // GET: Customer
         CustomerEntities db = new CustomerEntities();
-        //public ActionResult Index()
-        //{
-        //    var list = db.客戶資料.AsQueryable();
-        //    var data = list.Where(c => c.IsDelete == false).OrderByDescending(c => c.Id);
-        //    return View(data);
-        //}
+
+        客戶資料Repository repo = RepositoryHelper.Get客戶資料Repository();
+
         public ActionResult Index(string  keyword)
         {
-            var data = db.客戶資料.Where(c => c.IsDelete == false).AsQueryable();
-            
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                data = data.Where(c => c.客戶名稱.Contains(keyword));
-            }
-            return View(data.ToList());
+            //var data = db.客戶資料.Where(c => c.IsDelete == false).AsQueryable();
+            var data = repo.GetCustomerList(false , keyword);
+            ViewData.Model = data;
+            return View(data);
         }
 
         public ActionResult Create()
@@ -38,8 +32,11 @@ namespace MVC5Customer.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶資料.Add(c);
-                db.SaveChanges();
+                //db.客戶資料.Add(c);
+                //db.SaveChanges();
+                //return RedirectToAction("Index");
+                repo.Add(c);
+                repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
              

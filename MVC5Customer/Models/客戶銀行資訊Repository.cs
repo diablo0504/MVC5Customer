@@ -15,19 +15,23 @@ namespace MVC5Customer.Models
         {
             return this.All().FirstOrDefault(p => p.Id == id);
         }
-        public IQueryable<客戶銀行資訊> GetCustomerList(bool showAll = false)
+        public IQueryable<客戶銀行資訊> GetCustomerBankList(bool showAll = false, string keyword = "")
         {
             IQueryable<客戶銀行資訊> all = this.All();
             if (showAll)
             {
                 all = base.All();
             }
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                all = all.Where(p => p.銀行名稱.Contains(keyword));
+            }
             return all
                 .OrderByDescending(p => p.Id).Take(10);
         }
-        public void Update(客戶銀行資訊 customer)
+        public void Update(客戶銀行資訊 customerBank)
         {
-            this.UnitOfWork.Context.Entry(customer).State = EntityState.Modified;
+            this.UnitOfWork.Context.Entry(customerBank).State = EntityState.Modified;
         }
         public override void Delete(客戶銀行資訊 entity)
         {

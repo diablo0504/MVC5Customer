@@ -5,13 +5,14 @@ using System.Web;
 using System.Web.Mvc;
 using MVC5Customer.Models;
 using System.Data.Entity.Validation;
+using System.Net;
 
 namespace MVC5Customer.Controllers
 {
     public class CustomerController : Controller
     {
         // GET: Customer
-        CustomerEntities db = new CustomerEntities();
+       // CustomerEntities db = new CustomerEntities();
 
         客戶資料Repository repo = RepositoryHelper.Get客戶資料Repository();
 
@@ -42,64 +43,100 @@ namespace MVC5Customer.Controllers
              
             return View();
         }
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            var dataEdit = db.客戶資料.Find(id);
-            return View(dataEdit);
+            if(id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            客戶資料 customer = repo.GetOneCustomerDataByID(id.Value);
+            if(customer == null)
+            {
+                return HttpNotFound();
+            }
+            return View(customer);
         }
         [HttpPost]
         public ActionResult Edit(int id,客戶資料 customer)
         {
+            var data = repo.GetOneCustomerDataByID(id);
             if (ModelState.IsValid)
             {
-                var item = db.客戶資料.Find(id);
-                item.電話 = customer.電話;
-                item.統一編號 = customer.統一編號;
-                item.客戶銀行資訊 = customer.客戶銀行資訊;
-                item.客戶聯絡人 = customer.客戶聯絡人;
-                item.客戶名稱 = customer.客戶名稱;
-                item.地址 = customer.地址;
-                item.傳真 = customer.傳真;
-                db.SaveChanges();
+                repo.Update(customer);
+                repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
-            return View();
-        }
-        public ActionResult Details(int id)
-        {
-            var data = db.客戶資料.Find(id);
             return View(data);
         }
-        public ActionResult Delete(int id)
+        public ActionResult Details(int? id)
         {
-            var customer = db.客戶資料.Find(id);
-            db.客戶聯絡人.RemoveRange(customer.客戶聯絡人);
-            db.客戶銀行資訊.RemoveRange(customer.客戶銀行資訊);
+            if(id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            客戶資料 customer = repo.GetOneCustomerDataByID(id.Value);
+            return View(customer);
+        }
+        public ActionResult Delete(int? id)
+        {
+            if( id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            客戶資料 customer = repo.GetOneCustomerDataByID(id.Value);
+            if(customer == null)
+            {
+                return HttpNotFound();
+            }
+            return View(customer);
+            //var customer = db.客戶資料.Find(id);
+            //db.客戶聯絡人.RemoveRange(customer.客戶聯絡人);
+            //db.客戶銀行資訊.RemoveRange(customer.客戶銀行資訊);
             
-            customer.IsDelete = true;
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbEntityValidationException ex)
-            {
-                throw ex;
-            }
-            return RedirectToAction("Index");
+            //customer.IsDelete = true;
+            //try
+            //{
+            //    db.SaveChanges();
+            //}
+            //catch (DbEntityValidationException ex)
+            //{
+            //    throw ex;
+            //}
+            //return RedirectToAction("Index");
         }
         [HttpPost]
-        public ActionResult Index (SearchViewMode sss)
+        public ActionResult Delete( int? id ,客戶資料 customer)
         {
-            var list = db.客戶資料.AsQueryable();
-            if (string.IsNullOrEmpty(sss.Query))
+            if(id == null)
             {
-                sss.Query = "";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-           
-            var data = list.Where(c => c.客戶名稱.Contains(sss.Query) && c.IsDelete==false).OrderByDescending(c => c.Id);
-            return View(data);
-            //return View();
+            客戶資料 cus = repo.GetOneCustomerDataByID(id.Value);
+            try
+            {
+                repo.Delete(cus);
+                repo.UnitOfWork.Commit();
+                return RedirectToAction("Index");
+            }catch
+            {
+                return View(cus);
+            } 
         }
+
+
+        //[HttpPost]
+        //public ActionResult Index (SearchViewMode sss)
+        //{
+        //    var list = db.客戶資料.AsQueryable();
+        //    if (string.IsNullOrEmpty(sss.Query))
+        //    {
+        //        sss.Query = "";
+        //    }
+           
+        //    var data = list.Where(c => c.客戶名稱.Contains(sss.Query) && c.IsDelete==false).OrderByDescending(c => c.Id);
+        //    return View(data);
+        //    //return View();
+        //}
   
     
     }

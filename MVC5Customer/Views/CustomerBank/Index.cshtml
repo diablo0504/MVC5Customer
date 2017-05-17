@@ -10,10 +10,16 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm("Index", "CustomerBank"))
+@*@using (Html.BeginForm("Index", "CustomerBank"))
 {
     @Html.Label("銀行名稱搜尋")
     @Html.TextBox("BankQuery")
+    <input type="submit" value="search" />
+}*@
+
+@using (Html.BeginForm("Index", "CustomerBank", FormMethod.Get))
+{
+    <input type="search" name="keyword" placeholder="請輸入關鍵字" value="" />
     <input type="submit" value="search" />
 }
 <table class="table">

@@ -39,7 +39,6 @@ namespace MVC5Customer.Models
         {
             this.UnitOfWork.Context.Configuration.ValidateOnSaveEnabled = false;
             entity.IsDelete = true;
-            
         }
 
     }

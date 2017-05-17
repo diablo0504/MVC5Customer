@@ -6,23 +6,26 @@ using System.Web.Mvc;
 using MVC5Customer.Models;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
+using System.Net;
 
 namespace MVC5Customer.Models
 {
    
     public class CustomerBankController : Controller
     {
-        CustomerEntities db = new CustomerEntities();
+        //CustomerEntities db = new CustomerEntities();
+        客戶銀行資訊Repository repo = RepositoryHelper.Get客戶銀行資訊Repository();
+        客戶資料Repository repoCus = RepositoryHelper.Get客戶資料Repository();
         // GET: CustomerBank
-        public ActionResult Index()
+        public ActionResult Index(string keyword)
         {
-            var list = db.客戶銀行資訊.AsQueryable();
-            var data = list.OrderByDescending(c => c.Id);
+            var data = repo.GetCustomerBankList(false, keyword);
+            ViewData.Model = data;
             return View(data);
         }
         public ActionResult Create()
         {
-            var customerNameList = db.客戶資料.AsQueryable().Where(c => c.IsDelete ==false);
+            var customerNameList = repoCus.GetCustomerList();
             List<SelectListItem> items = new List<SelectListItem>();
             foreach (var name in customerNameList)
             {
@@ -44,69 +47,116 @@ namespace MVC5Customer.Models
                 int test;
                 if(int.TryParse(客戶名稱 ,out test))
                 {
-                    customerBank.客戶Id = int.Parse(客戶名稱);
-                    var ss = 客戶名稱;
-                    db.客戶銀行資訊.Add(customerBank);
-                    db.SaveChanges();
+                    customerBank.客戶Id = int.Parse(客戶名稱);                    
+                    repo.Add(customerBank);
+                    repo.UnitOfWork.Commit();
                     return RedirectToAction("Index");
                 }
             }
             return View();
         }
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            var data = db.客戶銀行資訊.Find(id);
-            return View(data);
+            if( id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            客戶銀行資訊 cusbank = repo.GetOneCustomerDataByID(id.Value);
+            if(cusbank == null)
+            {
+                return HttpNotFound();
+            }
+            return View(cusbank);
         }
         [HttpPost]
         public ActionResult Edit(int id , 客戶銀行資訊 customerBank)
         {
+            var cusbank = repo.GetOneCustomerDataByID(id);
             if (ModelState.IsValid)
             {
-                var item = db.客戶銀行資訊.Find(id);
-                item.銀行名稱 = customerBank.銀行名稱;
-                item.銀行代碼 = customerBank.銀行代碼;
-                item.帳戶號碼 = customerBank.帳戶號碼;
-                item.帳戶名稱 = customerBank.帳戶名稱;
-                item.客戶資料 = customerBank.客戶資料;
-                //item.客戶Id = customerBank.客戶Id;
-                item.分行代碼 = customerBank.分行代碼;
-                db.SaveChanges();
+                cusbank.銀行名稱 = customerBank.銀行名稱;
+                cusbank.銀行代碼 = customerBank.銀行代碼;
+                cusbank.帳戶號碼 = customerBank.帳戶號碼;
+                cusbank.帳戶名稱 = customerBank.帳戶名稱;
+                cusbank.客戶資料 = customerBank.客戶資料;
+                cusbank.分行代碼 = customerBank.分行代碼;
+
+                repo.Update(cusbank);
+                repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
             return View();
         }
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
-            var data = db.客戶銀行資訊.Find(id);
-            return View(data);
+            //var data = db.客戶銀行資訊.Find(id);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            客戶銀行資訊 customer = repo.GetOneCustomerDataByID(id.Value);
+            return View(customer);
+            //return View(data);
         }
-        public ActionResult Delete(int id )
+        public ActionResult Delete(int? id )
         {
-            var bank = db.客戶銀行資訊.Find(id);
-            //db.客戶銀行資訊.Remove(bank);
-            bank.IsDelete = true;
-            try
+            if (id == null)
             {
-                db.SaveChanges();
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            catch (DbEntityValidationException ex)
+            客戶銀行資訊 customerbank = repo.GetOneCustomerDataByID(id.Value);
+            if (customerbank == null)
             {
-                throw ex;
+                return HttpNotFound();
             }
-            return RedirectToAction("Index");
+            return View(customerbank);
+            //var bank = db.客戶銀行資訊.Find(id);
+            ////db.客戶銀行資訊.Remove(bank);
+            //bank.IsDelete = true;
+            //try
+            //{
+            //    db.SaveChanges();
+            //}
+            //catch (DbEntityValidationException ex)
+            //{
+            //    throw ex;
+            //}
+            //return RedirectToAction("Index");
         }
         [HttpPost]
-        public ActionResult Index(SearchBankViewMode Bank)
+        public ActionResult Delete(int? id, 客戶銀行資訊 customerbank)
         {
-            var list = db.客戶銀行資訊.AsQueryable();
-            if (string.IsNullOrEmpty(Bank.BankQuery))
+            if (id == null)
             {
-                Bank.BankQuery = "";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var data = list.Where(c => c.銀行名稱.Contains(Bank.BankQuery) && c.IsDelete == false).OrderByDescending(c => c.Id);
-            return View(data);
-            //return View();
+            客戶銀行資訊 cusbank = repo.GetOneCustomerDataByID(id.Value);
+            try
+            {
+                repo.Delete(cusbank);
+                repo.UnitOfWork.Commit();
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View(cusbank);
+            }
         }
+
+
+
+
+        //[HttpPost]
+        //public ActionResult Index(SearchBankViewMode Bank)
+        //{
+        //    var list = db.客戶銀行資訊.AsQueryable();
+        //    if (string.IsNullOrEmpty(Bank.BankQuery))
+        //    {
+        //        Bank.BankQuery = "";
+        //    }
+        //    var data = list.Where(c => c.銀行名稱.Contains(Bank.BankQuery) && c.IsDelete == false).OrderByDescending(c => c.Id);
+        //    return View(data);
+        //    //return View();
+        //}
     }
 }

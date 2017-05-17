@@ -6,28 +6,33 @@ using System.Web.Mvc;
 using MVC5Customer.Models;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
+using System.Net;
 
 namespace MVC5Customer.Controllers
 {
     public class CustomerContactPersonController : Controller
     {
         CustomerEntities db = new CustomerEntities();
+
+        客戶聯絡人Repository  repo = RepositoryHelper.Get客戶聯絡人Repository();
+        客戶資料Repository repoCus = RepositoryHelper.Get客戶資料Repository();
+
         // GET: CustomerContactPerson
-        public ActionResult Index()
+        public ActionResult Index(string keyword)
         {
-            var list = db.客戶聯絡人.AsQueryable();
-            var data = list.Where(p => p.IsDelete ==false).OrderByDescending(p => p.Id);
+            var data = repo.GetCustomerPersonList(false, keyword);
+            ViewData.Model = data;
             return View(data);
         }
         public ActionResult Create()
         {
-            var customerNameList = db.客戶資料.AsQueryable().Where(p => p.IsDelete ==false);
+            var customerNameList = repoCus.GetCustomerList();
             List<SelectListItem> items = new List<SelectListItem>();
             foreach (var name in customerNameList)
             {
                 items.Add(new SelectListItem()
                 {
-                    Text = name.客戶名稱.ToString(),
+                    Text = name.客戶名稱,
                     Value = name.Id.ToString()
                 });
             }
@@ -35,84 +40,151 @@ namespace MVC5Customer.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Create(客戶聯絡人 person)
+        public ActionResult Create(客戶聯絡人 person , string 客戶Id)
         {
             if (ModelState.IsValid)
             {
-                db.客戶聯絡人.Add(person);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            else
+                int test;
+                if (int.TryParse(客戶Id, out test))
+                {
+                    person.客戶Id = int.Parse(客戶Id);
+                    repo.Add(person);
+                    repo.UnitOfWork.Commit();
+                    return RedirectToAction("Index");
+                }
+            }else
             {
-                var customerNameList = db.客戶資料.AsQueryable().Where(p => p.IsDelete == false);
+                var customerNameList = repoCus.GetCustomerList();
                 List<SelectListItem> items = new List<SelectListItem>();
                 foreach (var name in customerNameList)
                 {
                     items.Add(new SelectListItem()
                     {
-                        Text = name.客戶名稱.ToString(),
+                        Text = name.客戶名稱,
                         Value = name.Id.ToString()
                     });
                 }
                 ViewBag.items = items;
             }
             return View();
+
+
+            //if (ModelState.IsValid)
+            //{
+            //    db.客戶聯絡人.Add(person);
+            //    db.SaveChanges();
+            //    return RedirectToAction("Index");
+            //}
+            //else
+            //{
+            //    var customerNameList = db.客戶資料.AsQueryable().Where(p => p.IsDelete == false);
+            //    List<SelectListItem> items = new List<SelectListItem>();
+            //    foreach (var name in customerNameList)
+            //    {
+            //        items.Add(new SelectListItem()
+            //        {
+            //            Text = name.客戶名稱.ToString(),
+            //            Value = name.Id.ToString()
+            //        });
+            //    }
+            //    ViewBag.items = items;
+            //}
+            //return View();
         }
-        public ActionResult Edit(int id )
+        public ActionResult Edit(int? id )
         {
-            var data = db.客戶聯絡人.Find(id);
-            return View(data);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            客戶聯絡人 cusbank = repo.GetOneCustomerPersonDataByID(id.Value);
+            if (cusbank == null)
+            {
+                return HttpNotFound();
+            }
+            return View(cusbank);
         }
         [HttpPost]
         public ActionResult Edit(int id, 客戶聯絡人 person)
         {
+
+            var cusperson = repo.GetOneCustomerPersonDataByID(id);
             if (ModelState.IsValid)
             {
-                var item = db.客戶聯絡人.Find(id);
-                item.電話 = person.電話;
-                item.職稱 = person.職稱;
-                item.手機 = person.手機;
-                item.客戶資料 = person.客戶資料;
-                item.姓名 = person.姓名;
-                item.Email = person.Email;
-                db.SaveChanges();
+
+                cusperson.電話 = person.電話;
+                cusperson.職稱 = person.職稱;
+                cusperson.手機 = person.手機;
+                cusperson.客戶資料 = person.客戶資料;
+                cusperson.姓名 = person.姓名;
+                cusperson.Email = person.Email;
+
+                repo.Update(cusperson);
+                repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
             return View();
         }
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
-            var data = db.客戶聯絡人.Find(id);
-            return View(data);
-        }
-        public ActionResult Delete(int id)
-        {
-            var person = db.客戶聯絡人.Find(id);
-            //db.客戶聯絡人.Remove(person);
-            person.IsDelete = true;
-            try
+
+            //var data = db.客戶銀行資訊.Find(id);
+            if (id == null)
             {
-                db.SaveChanges();
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            catch (DbEntityValidationException ex)
-            {
-                throw ex;
-            }
-            return RedirectToAction("Index");
+            客戶聯絡人 customerperson = repo.GetOneCustomerPersonDataByID(id.Value);
+            return View(customerperson);
 
         }
-        [HttpPost]
-        public ActionResult Index(SearchContactViewMode Contact)
+        public ActionResult Delete(int? id)
         {
-            var list = db.客戶聯絡人.AsQueryable();
-            if (string.IsNullOrEmpty(Contact.ContactQuery))
+            if (id == null)
             {
-                Contact.ContactQuery = "";
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var data = list.Where(c => (c.姓名.Contains(Contact.ContactQuery)|| c.職稱.Contains(Contact.ContactQuery)) && c.IsDelete == false).OrderByDescending(c => c.Id);
-            return View(data);
-            //return View();
+            客戶聯絡人 person = repo.GetOneCustomerPersonDataByID(id.Value);
+            if (person == null)
+            {
+                return HttpNotFound();
+            }
+            return View(person);
+
         }
+
+        [HttpPost]
+        public ActionResult Delete(int? id, 客戶聯絡人 customerperson)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            客戶聯絡人 person = repo.GetOneCustomerPersonDataByID(id.Value);
+            try
+            {
+                repo.Delete(person);
+                repo.UnitOfWork.Commit();
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View(person);
+            }
+        }
+
+
+
+        //[HttpPost]
+        //public ActionResult Index(SearchContactViewMode Contact)
+        //{
+        //    var list = db.客戶聯絡人.AsQueryable();
+        //    if (string.IsNullOrEmpty(Contact.ContactQuery))
+        //    {
+        //        Contact.ContactQuery = "";
+        //    }
+        //    var data = list.Where(c => (c.姓名.Contains(Contact.ContactQuery)|| c.職稱.Contains(Contact.ContactQuery)) && c.IsDelete == false).OrderByDescending(c => c.Id);
+        //    return View(data);
+        //    //return View();
+        //}
     }
 }

@@ -11,8 +11,8 @@ namespace MVC5Customer.Controllers
 {
     public class CustomerController : Controller
     {
-        // GET: Customer
-       // CustomerEntities db = new CustomerEntities();
+        // GET: Customer  CustomerSelectList
+        // CustomerEntities db = new CustomerEntities();
 
         客戶資料Repository repo = RepositoryHelper.Get客戶資料Repository();
 
@@ -21,6 +21,9 @@ namespace MVC5Customer.Controllers
             //var data = db.客戶資料.Where(c => c.IsDelete == false).AsQueryable();
             var data = repo.GetCustomerList(false , keyword);
             ViewData.Model = data;
+           // SelectList slect = new SelectList();
+
+
             return View(data);
         }
 

@@ -21,7 +21,29 @@ namespace MVC5Customer.Controllers
             //var data = db.客戶資料.Where(c => c.IsDelete == false).AsQueryable();
             var data = repo.GetCustomerList(false , keyword);
             ViewData.Model = data;
-           // SelectList slect = new SelectList();
+
+            var items = new List<SelectListItem>();
+
+            foreach (var name in Enum.GetValues(typeof(customerClass)))
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = name.ToString(),
+                    Value = ((int)name).ToString()
+                });
+            }
+
+            // SelectList slect = new SelectList();
+
+            //List<SelectListItem> items = new List<SelectListItem>();
+            //foreach (var name in customerClass)
+            //{
+            //    items.Add(new SelectListItem()
+            //    {
+            //        Text = name.客戶名稱,
+            //        Value = name.Id.ToString()
+            //    });
+            //}
 
 
             return View(data);

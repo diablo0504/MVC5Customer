@@ -45,5 +45,11 @@ namespace MVC5Customer.Models
         public string Query { get; set; }
     }
 
-
+    public enum customerClass:int
+    {
+        製造業 = 1,
+        科技業 = 2,
+        紡織業 = 3,
+        服務業 = 4
+    }
 }

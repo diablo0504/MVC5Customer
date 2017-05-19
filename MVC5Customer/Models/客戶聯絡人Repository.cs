@@ -15,7 +15,7 @@ namespace MVC5Customer.Models
         {
             return this.All().FirstOrDefault(p => p.Id == id);
         }
-        public IQueryable<客戶聯絡人> GetCustomerPersonList(bool showAll = false, string keyword = "")
+        public IQueryable<客戶聯絡人> GetCustomerPersonList(bool showAll = false, string keyword = "", string PersonJob = "", string sortOrder ="")
         {
             IQueryable<客戶聯絡人> all = this.All();
             if (showAll)
@@ -26,8 +26,57 @@ namespace MVC5Customer.Models
             {
                 all = all.Where(p => p.姓名.Contains(keyword));
             }
+            if (!string.IsNullOrEmpty(PersonJob) && PersonJob != "0")
+            {
+                all = all.Where(p => p.職稱.Contains(PersonJob));
+            }
+            if (!string.IsNullOrEmpty(sortOrder))
+            {
+                switch (sortOrder)
+                {
+                    case "job":
+                        all = all.OrderBy(p => p.職稱);
+                        break;
+                    case "job_desc":
+                        all = all.OrderByDescending(p => p.職稱);
+                        break;
+                    case "name":
+                        all = all.OrderBy(p => p.姓名);
+                        break;
+                    case "name_desc":
+                        all = all.OrderByDescending(p => p.姓名);
+                        break;
+                    case "email":
+                        all = all.OrderBy(p => p.Email);
+                        break;
+                    case "email_desc":
+                        all = all.OrderByDescending(p => p.Email);
+                        break;
+                    case "phone":
+                        all = all.OrderBy(p => p.手機);
+                        break;
+                    case "phone_desc":
+                        all = all.OrderByDescending(p => p.手機);
+                        break;
+                    case "tell":
+                        all = all.OrderBy(p => p.電話);
+                        break;
+                    case "tell_desc":
+                        all = all.OrderByDescending(p => p.電話);
+                        break;
+                    case "cus":
+                        all = all.OrderBy(p => p.客戶資料);
+                        break;
+                    case "cus_desc":
+                        all = all.OrderByDescending(p => p.客戶資料);
+                        break;
+                    default:
+                        all = all.OrderByDescending(p => p.Id);
+                        break;
+                }
+            }
             return all
-                .OrderByDescending(p => p.Id).Take(10);
+                .Take(10);
         }
         public void Update(客戶聯絡人 customerPerson)
         {
@@ -38,6 +87,12 @@ namespace MVC5Customer.Models
             this.UnitOfWork.Context.Configuration.ValidateOnSaveEnabled = false;
             entity.IsDelete = true;
 
+        }
+        public IQueryable<string> GetPersonJobTitleList()
+        {
+            IQueryable<客戶聯絡人> all = this.All();
+            var DropList = all.Select(p => p.職稱).Distinct();
+            return DropList;
         }
     }
 

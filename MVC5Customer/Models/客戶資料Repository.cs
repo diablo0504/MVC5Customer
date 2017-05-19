@@ -17,9 +17,10 @@ namespace MVC5Customer.Models
             return this.All().FirstOrDefault( p => p.Id ==id);
         }
 
-        public IQueryable<客戶資料> GetCustomerList(bool showAll = false, string keyword = "")
+        public IQueryable<客戶資料> GetCustomerList(bool showAll = false, string keyword = "" ,string drop ="" ,string sortOrder ="")
         {
             IQueryable<客戶資料> all = this.All();
+            int test = 0;
             if (showAll)
             {
                 all = base.All();
@@ -28,8 +29,59 @@ namespace MVC5Customer.Models
             {
                 all = all.Where(p => p.客戶名稱.Contains(keyword));
             }
+            if (!string.IsNullOrEmpty(drop) && int.TryParse(drop , out test))
+            {
+                int chose = int.Parse(drop);
+                if(chose != 0) { all = all.Where(p => p.客戶分類 == chose); }
+            }
+            if (!string.IsNullOrEmpty(sortOrder))
+            {
+                switch (sortOrder)
+                {
+                    case "name":
+                        all = all.OrderBy(p => p.客戶名稱);
+                        break;
+                    case "name_desc":
+                        all = all.OrderByDescending(p => p.客戶名稱);
+                        break;
+                    case "num":
+                        all = all.OrderBy(p => p.統一編號);
+                        break;
+                    case "num_desc":
+                        all = all.OrderByDescending(p => p.統一編號);
+                        break;
+                    case "tell":
+                        all = all.OrderBy(p => p.電話);
+                        break;
+                    case "tell_desc":
+                        all = all.OrderByDescending(p => p.電話);
+                        break;
+                    case "fax":
+                        all = all.OrderBy(p => p.傳真);
+                        break;
+                    case "fax_desc":
+                        all = all.OrderByDescending(p => p.傳真);
+                        break;
+                    case "address":
+                        all = all.OrderBy(p => p.地址);
+                        break;
+                    case "address_desc":
+                        all = all.OrderByDescending(p => p.地址);
+                        break;
+                    case "email":
+                        all = all.OrderBy(p => p.Email);
+                        break;
+                    case "email_desc":
+                        all = all.OrderByDescending(p => p.Email);
+                        break;
+
+                    default:
+                        all = all.OrderByDescending(p => p.Id);
+                        break;
+                }
+            }
             return all
-                .OrderByDescending(p => p.Id).Take(10);
+                .Take(10);
         }
         public void Update(客戶資料 customer)
         {

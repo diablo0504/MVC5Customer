@@ -12,16 +12,37 @@ namespace MVC5Customer.Controllers
 {
     public class CustomerContactPersonController : Controller
     {
-        CustomerEntities db = new CustomerEntities();
+       // CustomerEntities db = new CustomerEntities();
 
         客戶聯絡人Repository  repo = RepositoryHelper.Get客戶聯絡人Repository();
         客戶資料Repository repoCus = RepositoryHelper.Get客戶資料Repository();
 
         // GET: CustomerContactPerson
-        public ActionResult Index(string keyword)
+        public ActionResult Index(string keyword,string PersonJob, string sortOrder)
         {
-            var data = repo.GetCustomerPersonList(false, keyword);
+            ViewBag.JobSortParm = sortOrder == "job" ? "job_desc" : "job";
+            ViewBag.NameSortParm = sortOrder == "name" ? "name_desc" : "name";
+            ViewBag.EmailSortParm = sortOrder == "email" ? "email_desc" : "email";
+            ViewBag.PhoneSortParm = sortOrder == "phone" ? "phone_desc" : "phone";
+            ViewBag.TellSortParm = sortOrder == "tell" ? "tell_desc" : "tell";
+            //ViewBag.CusNameSortParm = sortOrder == "cus" ? "cus_desc" : "cus";
+
+            var data = repo.GetCustomerPersonList(false, keyword , PersonJob, sortOrder);
             ViewData.Model = data;
+
+            var dropJob = repo.GetPersonJobTitleList();
+            var items = new List<SelectListItem>();
+            items.Add(new SelectListItem() { Text = "職稱篩選", Value = "0" });
+            foreach (var name in dropJob)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = name.ToString(),
+                    Value = name.ToString()
+                });
+            }
+            ViewBag.PersonJob = items;
+
             return View(data);
         }
         public ActionResult Create()

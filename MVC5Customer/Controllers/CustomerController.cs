@@ -16,13 +16,21 @@ namespace MVC5Customer.Controllers
 
         客戶資料Repository repo = RepositoryHelper.Get客戶資料Repository();
 
-        public ActionResult Index(string  keyword)
+        public ActionResult Index(string keyword, string drop, string sortOrder)
         {
             //var data = db.客戶資料.Where(c => c.IsDelete == false).AsQueryable();
-            var data = repo.GetCustomerList(false , keyword);
+            ViewBag.NameSortParm = sortOrder == "name" ? "name_desc" : "name";
+            ViewBag.NumSortParm = sortOrder == "num" ? "num_desc" : "num";
+            ViewBag.TellSortParm = sortOrder == "tell" ? "tell_desc" : "tell";
+            ViewBag.FaxSortParm = sortOrder == "fax" ? "fax_desc" : "fax";
+            ViewBag.AddressSortParm = sortOrder == "address" ? "address_desc" : "address";
+            ViewBag.EmailSortParm = sortOrder == "email" ? "email_desc" : "email";
+
+            var data = repo.GetCustomerList(false, keyword, drop, sortOrder);
             ViewData.Model = data;
 
             var items = new List<SelectListItem>();
+            items.Add(new SelectListItem() { Text = "客戶類別篩選", Value = "0" });
 
             foreach (var name in Enum.GetValues(typeof(customerClass)))
             {
@@ -32,20 +40,7 @@ namespace MVC5Customer.Controllers
                     Value = ((int)name).ToString()
                 });
             }
-
-            // SelectList slect = new SelectList();
-
-            //List<SelectListItem> items = new List<SelectListItem>();
-            //foreach (var name in customerClass)
-            //{
-            //    items.Add(new SelectListItem()
-            //    {
-            //        Text = name.客戶名稱,
-            //        Value = name.Id.ToString()
-            //    });
-            //}
-
-
+            ViewBag.drop = items;
             return View(data);
         }
 

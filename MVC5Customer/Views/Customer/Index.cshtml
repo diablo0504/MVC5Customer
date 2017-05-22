@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<MVC5Customer.Models.客戶資料>
+@using PagedList
+@using PagedList.Mvc
+@*@model  IPagedList<MVC5Customer.Models.客戶資料>*@
 
 @{
     ViewBag.Title = "Index";
@@ -33,27 +36,27 @@
 <table class="table">
     <tr>
         <th>
-            @*@Html.DisplayNameFor(model => model.客戶名稱)*@
+            @*@Html.DisplayNameFor(model => model.FirstOrDefault().客戶名稱)*@
             @Html.ActionLink("客戶名稱", "Index", new { sortOrder = ViewBag.NameSortParm })
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.統一編號)*@
+            @*@Html.DisplayNameFor(model => model.FirstOrDefault().統一編號)*@
             @Html.ActionLink("統一編號", "Index", new { sortOrder = ViewBag.NumSortParm })
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.電話)*@
+            @*@Html.DisplayNameFor(model => model.FirstOrDefault().電話)*@
             @Html.ActionLink("電話", "Index", new { sortOrder = ViewBag.TellSortParm })
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.傳真)*@
+            @*@Html.DisplayNameFor(model => model.FirstOrDefault().傳真)*@
             @Html.ActionLink("傳真", "Index", new { sortOrder = ViewBag.FaxSortParm })
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.地址)*@
+            @*@Html.DisplayNameFor(model => model.FirstOrDefault().地址)*@
             @Html.ActionLink("地址", "Index", new { sortOrder = ViewBag.AddressSortParm })
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.Email)*@
+            @*@Html.DisplayNameFor(model => model.FirstOrDefault().Email)*@
             @Html.ActionLink("Email", "Index", new { sortOrder = ViewBag.EmailSortParm })
         </th>
         <th></th>
@@ -89,3 +92,4 @@
     }
 
 </table>
+@Html.PagedListPager(Model as IPagedList, (p) => Url.Action("Index",new { pageNo = p }))

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using MVC5Customer.Models;
 using System.Data.Entity.Validation;
 using System.Net;
+using PagedList;
 
 namespace MVC5Customer.Controllers
 {
@@ -15,8 +16,8 @@ namespace MVC5Customer.Controllers
         // CustomerEntities db = new CustomerEntities();
 
         客戶資料Repository repo = RepositoryHelper.Get客戶資料Repository();
-
-        public ActionResult Index(string keyword, string drop, string sortOrder)
+        //private int pageSize = 5;
+        public ActionResult Index(string keyword, string drop, string sortOrder , int PagNo = 1)
         {
             //var data = db.客戶資料.Where(c => c.IsDelete == false).AsQueryable();
             ViewBag.NameSortParm = sortOrder == "name" ? "name_desc" : "name";
@@ -26,8 +27,15 @@ namespace MVC5Customer.Controllers
             ViewBag.AddressSortParm = sortOrder == "address" ? "address_desc" : "address";
             ViewBag.EmailSortParm = sortOrder == "email" ? "email_desc" : "email";
 
+            //int currentPage = 5;
+
+            
+
             var data = repo.GetCustomerList(false, keyword, drop, sortOrder);
-            ViewData.Model = data;
+
+            //var result = data.OrderByDescending(p=>p.Id).ToPagedList(currentPage, pageSize);
+            ViewData.Model = data.OrderByDescending(p => p.Id).ToPagedList(PagNo,2);
+            //ViewData.Model = data;
 
             var items = new List<SelectListItem>();
             items.Add(new SelectListItem() { Text = "客戶類別篩選", Value = "0" });
@@ -41,7 +49,7 @@ namespace MVC5Customer.Controllers
                 });
             }
             ViewBag.drop = items;
-            return View(data);
+            return View();
         }
 
         public ActionResult Create()

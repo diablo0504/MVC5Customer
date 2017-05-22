@@ -81,7 +81,7 @@ namespace MVC5Customer.Models
                 }
             }
             return all
-                .Take(10);
+                ;
         }
         public void Update(客戶資料 customer)
         {

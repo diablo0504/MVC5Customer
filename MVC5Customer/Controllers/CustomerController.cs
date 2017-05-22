@@ -17,7 +17,7 @@ namespace MVC5Customer.Controllers
 
         客戶資料Repository repo = RepositoryHelper.Get客戶資料Repository();
         //private int pageSize = 5;
-        public ActionResult Index(string keyword, string drop, string sortOrder , int PagNo = 1)
+        public ActionResult Index(string keyword, string drop, string sortOrder , int PageNo = 1)
         {
             //var data = db.客戶資料.Where(c => c.IsDelete == false).AsQueryable();
             ViewBag.NameSortParm = sortOrder == "name" ? "name_desc" : "name";
@@ -34,7 +34,7 @@ namespace MVC5Customer.Controllers
             var data = repo.GetCustomerList(false, keyword, drop, sortOrder);
 
             //var result = data.OrderByDescending(p=>p.Id).ToPagedList(currentPage, pageSize);
-            ViewData.Model = data.OrderByDescending(p => p.Id).ToPagedList(PagNo,2);
+            ViewData.Model = data.OrderByDescending(p => p.Id).ToPagedList(PageNo, 2);
             //ViewData.Model = data;
 
             var items = new List<SelectListItem>();
